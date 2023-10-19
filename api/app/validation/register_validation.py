@@ -16,7 +16,7 @@ def register_validation(request):
         if username is None or email is None:
             error_list.append('Field can not be null')
         
-        if len(password) > 5:
+        if len(password) < 5:
             error_list.append('password must be minimum 5 charaters')
 
         

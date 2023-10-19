@@ -20,3 +20,15 @@ class Base(models.Model):
 
     class Meta:
         abstract = True
+
+class OTP(models.Model):
+    user = models.ForeignKey(User, related_name="+", on_delete=models.CASCADE, db_column='user')
+    email = models.EmailField(max_length=45)
+    otp = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now=False)
+
+    class Meta:
+        db_table = 'otp'
+    
+    def __str__(self):
+        return self.email
