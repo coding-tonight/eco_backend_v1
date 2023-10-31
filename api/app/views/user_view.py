@@ -202,6 +202,7 @@ class ChangePassword(APIView):
     """ change password class 
         logic for changing password of the user
     """
+
     def post(self, request, format=None):
         try:
             if not request.data:
@@ -212,14 +213,15 @@ class ChangePassword(APIView):
             if error_list:
                 return Response({globalParameters.MESSAGE: globalParameters.SUCCESS_MSG, 'error': error_list}, status=status.HTTP_401_UNAUTHORIZED)
 
-            user = User.objects.get(id=request.user.id) # get userintance with request.user.id
+            # get userintance with request.user.id
+            user = User.objects.get(id=request.user.id)
             user.set_password(password)
             user.save()
 
             return Response({globalParameters.MESSAGE: 'Your password is successfully change.',
                             'status': globalParameters.SUCCESS_CODE},
                             status=status.HTTP_200_OK)
-        
+
         except Exception as exe:
             logger.error(str(exe), exc_info=True)
             return Response({globalParameters.MESSAGE: globalParameters.ERROR_CODE_SERVER_SITE}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

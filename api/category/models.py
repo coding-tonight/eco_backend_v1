@@ -6,5 +6,8 @@ from app.models import Base
 
 class Category(Base):
     category_name = models.CharField(max_length=45)
-    image_url = models.ImageField(upload_to='/uploads/category/',null=True, blank=True)
+    icon_url = models.ImageField(upload_to='uploads/category/icons/',null=True, blank=True)
+
+    class Meta:
+        db_table = 'category'
 
