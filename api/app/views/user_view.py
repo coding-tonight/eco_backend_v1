@@ -160,6 +160,7 @@ class ForgetPassword(APIView):
                                        created_at=datetime.now())
 
                     return Response({globalParameters.MESSAGE: "Otp is successfully send to your email."}, status=status.HTTP_200_OK)
+                
             except Exception as exe:
                 raise Exception(exe)
 

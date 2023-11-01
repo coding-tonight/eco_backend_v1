@@ -6,7 +6,10 @@ from category.models import Category
 class CategorySerializer(serializers.Serializer):
     reference_id = serializers.CharField(read_only=True)
     category_name = serializers.CharField()
-    icon_url = serializers.ImageField()
+    icon_url = serializers.ImageField(required=False)
+
+    # def validate_category_name(self, data):
+    #     return 
 
     def create(self, validated_data):
         return Category.objects.create(**validated_data)
