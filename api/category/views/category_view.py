@@ -120,7 +120,7 @@ class CategoryDetail(APIView):
 
             serializer = CategorySerializer(category, data=request.data)
             user = request.user
-
+            # valid request data is valid nor not
             if serializer.is_valid():
                 serializer.save(updated_at=datetime.now(),
                                 updated_by=user)
