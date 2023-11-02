@@ -54,6 +54,7 @@ class Login(APIView):
                     'data': {
                         'user': user.username,
                         'email': detail.email,
+                        'is_superadmin': user.is_superadmin,
                         'token': token.key,
                         'joined': detail.date_joined,
                         'is_active': detail.is_active
