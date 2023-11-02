@@ -1,5 +1,6 @@
 SUCCESS_MSG = 'Task was successfully completed.'
 ERROR_MSG = 'Ops something went wrong.'
+DELETE_MSG = 'Remove request was successfully excuted.'
 
 SUCCESS_CODE = 200
 ERROR_CODE_CLIENT_SITE = 403

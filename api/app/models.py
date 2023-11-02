@@ -13,10 +13,11 @@ def uuid_generator():
 
 class Base(models.Model):
     reference_id = models.CharField(max_length=32,unique=True, default=uuid_generator())
-    created_by  = models.DateTimeField(auto_now=False)
-    created_at = models.ForeignKey(User, related_name="+", on_delete=models.PROTECT ,db_column="created_at")
+    created_at  = models.DateTimeField(auto_now=False)
+    created_by = models.ForeignKey(User, related_name="+", on_delete=models.PROTECT ,db_column="created_by")
     updated_at = models.DateTimeField(null=True, auto_now=False)
     updated_by = models.ForeignKey(User, related_name="+", on_delete=models.PROTECT, db_column="updated_by", null=True)
+    is_delete = models.BooleanField(default=False)
 
     class Meta:
         abstract = True

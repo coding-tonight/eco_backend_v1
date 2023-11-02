@@ -15,8 +15,8 @@ class CategorySerializer(serializers.Serializer):
         return Category.objects.create(**validated_data)
     
     def update(self, instance ,validated_data):
-        instance.category_name = validated_data['category_name']
-        instance.icon_url = validated_data['icon_url']
+        instance.category_name = validated_data.get('category_name')
+        instance.icon_url = validated_data.get('icon_url')
         instance.save()
 
         return instance
