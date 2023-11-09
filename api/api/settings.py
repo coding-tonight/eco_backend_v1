@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_yasg',  # For Swagger and ReDoc  
     "corsheaders",
     'rest_framework.authtoken',
     'app.apps.AppConfig',
-    'category.apps.CategoryConfig'
+    'category.apps.CategoryConfig',
+    'docs.apps.DocsConfig'
 ]
 
 CORS_ALLOWED_ORIGINS = [

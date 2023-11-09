@@ -216,7 +216,7 @@ class ChangePassword(APIView):
                 return Response({globalParameters.MESSAGE: globalParameters.SUCCESS_MSG, 'error': error_list}, status=status.HTTP_401_UNAUTHORIZED)
 
             # get userintance with request.user.id
-            user = User.objects.get(id=request.user.id)
+            user = User.objects.get(id=request.user.id) 
             user.set_password(password)
             user.save()
 
