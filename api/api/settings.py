@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'app.apps.AppConfig',
     'category.apps.CategoryConfig',
-    'docs.apps.DocsConfig'
+    'docs.apps.DocsConfig',
+    'metadata.apps.MetadataConfig'
 ]
 
 CORS_ALLOWED_ORIGINS = [
