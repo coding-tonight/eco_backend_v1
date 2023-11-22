@@ -83,6 +83,7 @@ class ItemVariant(Base):
     size = models.ForeignKey(Size, related_name="+", on_delete=models.PROTECT)
     color = models.ForeignKey(Color, related_name="+", on_delete=models.PROTECT)
     stock = models.IntegerField(max_length=10, null=True)
+    status = models.BooleanField(default=True)
 
     def __str__(self):
         return f"variant of {self.item.item_name}"
@@ -91,3 +92,12 @@ class ItemVariant(Base):
         db_table = 'item_variant'
         ordering = ('created_at')
 
+
+
+class ItemImage(Base):
+    item = models.ForeignKey(ItemVariant, related_name="+", on_delete=models.PROTECT)
+    image = models.ImageField(upload_to='uploads/variantions/')
+
+    class Meta:
+        db_table = 'item_images'
+        ordering = ('created_at')
