@@ -9,5 +9,6 @@ urlpatterns = [
     path('register/', views.Register.as_view()),
     path('forget/password/', views.ForgetPassword.as_view()),
     path('verify/otp/', views.VerifyOTP.as_view()),
-    path('verify/change/password/', views.ChangePassword.as_view())
+    path('verify/change/password/', views.ChangePassword.as_view()),
+    path('logout/', views.LoginOut.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

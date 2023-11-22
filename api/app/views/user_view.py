@@ -145,7 +145,7 @@ class ForgetPassword(APIView):
                     server.login('autonomoustechnepal@gmail.com',
                                  'osjrqslxredgjwee')
 
-                    msg = EmailMessage()  # createing email dict or objects
+                    msg = EmailMessage()  # createing email dict or objects                     
 
                     otp = secrets.token_hex(4)  # generating otp
                     msg.set_content(f'Hi {email} your otp is {otp}')
@@ -214,15 +214,38 @@ class ChangePassword(APIView):
 
             if error_list:
                 return Response({globalParameters.MESSAGE: globalParameters.SUCCESS_MSG, 'error': error_list}, status=status.HTTP_401_UNAUTHORIZED)
+            
+            try:
+                with transaction.atomic():
+                    # get userintance with request.user.id
+                    user = User.objects.get(id=request.user.id) 
+                    user.set_password(password)
+                    user.save()
 
-            # get userintance with request.user.id
-            user = User.objects.get(id=request.user.id) 
-            user.set_password(password)
-            user.save()
+                    server = smtplib.SMTP('smtp.gmail.com', 587)
+                    server.starttls()
 
-            return Response({globalParameters.MESSAGE: 'Your password is successfully change.',
-                            'status': globalParameters.SUCCESS_CODE},
-                            status=status.HTTP_200_OK)
+                    server.login('autonomoustechnepal@gmail.com',
+                                    'osjrqslxredgjwee')
+
+                    msg = EmailMessage()  # createing email dict or objects                     
+
+                    msg.set_content(f'Hi {user.email} your password has been changed.')
+                    msg['Subject'] = 'Password Changed Notification.'
+                    msg['From'] = 'autonomoustechnepal@gmail.com'
+                    msg['To'] = user.email
+                    # send otp in the mail
+                    server.send_message(msg)  # alternative sendmail()
+                    server.close()
+
+
+                    return Response({globalParameters.MESSAGE: 'Your password is successfully change.',
+                                    'status': globalParameters.SUCCESS_CODE},
+                                    status=status.HTTP_200_OK)
+               
+            except Exception as exe:
+                raise Exception(exe)
+            
 
         except Exception as exe:
             logger.error(str(exe), exc_info=True)
@@ -234,4 +257,16 @@ class LoginOut(APIView):
     authentication_classes = [TokenAuthentication]
 
     def delete(self, request, format=None):
-        pass
+        try:
+            user = request.user
+            Token.objects.get(user_id=user).delete()
+            
+            MSG = {
+                globalParameters.MESSAGE: globalParameters.LOGOUT_MSG,
+                'status': globalParameters.SUCCESS_CODE
+            }
+            return Response(MSG, status=status.HTTP_200_OK)
+        
+        except Exception as exe:
+            logger.error(str(exe), exc_info=True)
+            return Response({ globalParameters.MESSAGE: globalParameters.ERROR_MSG } , status=status.HTTP_500_INTERNAL_SERVER_ERROR)

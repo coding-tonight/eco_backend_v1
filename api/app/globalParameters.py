@@ -11,3 +11,4 @@ MESSAGE = 'MSG'
 # AUTH 
 LOGIN_MSG = 'You are successfully login.'
 INVALID_MSG = 'Credentials invalid.'
+LOGOUT_MSG = 'Sucessfully logout.'
