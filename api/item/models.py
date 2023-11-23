@@ -56,48 +56,36 @@ class Color(Base):
         db_table = 'colors'
         ordering = ('created_at')
 
-
-class Item(Base):
-    item_code = models.CharField(max_length=45)
-    item_name = models.CharField(max_length=255)
+class Product(Base):
+    product_name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
-    category = models.ForeignKey(
-        Category, related_name="+", on_delete=models.PROTECT)
-    thumbnail = models.ImageField(upload_to='uploads/product/thumbnail/', null=True)
+    discount = models.ForeignKey(Discount, related_name="+", on_delete=models.PROTECT)
+    thumbnail = models.ImageField(upload_to='uploads/product/')
+
+    objects = ItemVariantManager()
+    product = models.Manager()
 
     def __str__(self):
-        return self.item_name
+        return self.product_name
     
-    def get_absolute_url(self):
-        return reverse('product', kwargs={'slug': self.slug})  
-
     class Meta:
-        db_table = 'items'
+        db_table = 'product'
         ordering = ('created_at')
 
+class ProductVariant(Base):
+    product = models.ForeignKey(Product, related_name="+", on_delete=models.CASCADE)
+    color = models.ManyToManyField(Color, related_name="+", on_delete=models.PROTECT)
+    qty = models.IntegerField(max_length=10)
 
-class ItemVariant(Base):
-    item = models.ForeignKey(Item, related_name="+", on_delete=models.CASCADE)
-    description = models.TextField(max_length=200)
-    price = models.DecimalField(max_length=10, decimal_places=2)
+    class Meta:
+        ordering = ('created_at')
+
+class SKU(Base):
+    varinat = models.ForeignKey(ProductVariant, related_name="+", on_delete=models.CASCADE)
     size = models.ForeignKey(Size, related_name="+", on_delete=models.PROTECT)
-    color = models.ForeignKey(Color, related_name="+", on_delete=models.PROTECT)
-    stock = models.IntegerField(max_length=10, null=True)
-    status = models.BooleanField(default=True)
+    sku_code = models.CharField(max_length=20)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"variant of {self.item.item_name}"
-
-    class Meta:
-        db_table = 'item_variant'
-        ordering = ('created_at')
-
-
-
-class ItemImage(Base):
-    item = models.ForeignKey(ItemVariant, related_name="+", on_delete=models.PROTECT)
-    image = models.ImageField(upload_to='uploads/variantions/')
-
-    class Meta:
-        db_table = 'item_images'
-        ordering = ('created_at')
+        return self.varinat.product.product_name
+    

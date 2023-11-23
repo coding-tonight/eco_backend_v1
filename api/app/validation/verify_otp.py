@@ -8,6 +8,8 @@ def verify_opt_validation(request):
         otp = data.get('otp')
         error_list = []
 
+        print(otp , request.data)
+
         if not OTP.objects.filter(otp=otp).exists():
             error_list.append('Otp does not exits or time is exceeded please sending otp again.')
         
