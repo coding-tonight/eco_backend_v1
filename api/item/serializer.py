@@ -1,1 +1,5 @@
-from rest_framework import serializer
+from rest_framework import serializers
+
+
+class ProductSerializer(serializers.Serializer):
+    pass
