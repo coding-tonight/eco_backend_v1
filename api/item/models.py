@@ -8,18 +8,9 @@ from category.models import Category
 
 """ model managers section
 """
-
- 
 class ItemVariantManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_delete=False)
-
-    def color(self):
-        pass
-
-    def size(self):
-        pass
-
 
 class Discount(Base):
     tilte = models.CharField(max_length=45)
@@ -32,7 +23,7 @@ class Discount(Base):
 
     class Meta:
         db_table = 'discount'
-        ordering = ('created_at')
+        ordering = ['created_at']
 
 
 class Size(Base):
@@ -43,7 +34,7 @@ class Size(Base):
 
     class Meta:
         db_table = 'sizes'
-        ordering = ('created_at')
+        ordering = ['created_at']
 
 
 class Color(Base):
@@ -55,7 +46,7 @@ class Color(Base):
 
     class Meta:
         db_table = 'colors'
-        ordering = ('created_at')
+        ordering = ['created_at']
 
 
 class Product(Base):
@@ -79,22 +70,22 @@ class Product(Base):
 
     class Meta:
         db_table = 'product'
-        ordering = ('created_at')
+        ordering = ['created_at']
 
 
 class ProductVariant(Base):
     product = models.ForeignKey(
         Product, related_name="+", on_delete=models.CASCADE)
     color = models.ManyToManyField(
-        Color, related_name="+", on_delete=models.PROTECT)
-    qty = models.IntegerField(max_length=10)
+        Color, related_name="+")
+    qty = models.IntegerField()
 
     class Meta:
         db_table = 'product_variant'
-        ordering = ('created_at')
+        ordering = ['created_at']
 
 
-class SKU(Base):
+class Sku(Base):
     varinat = models.ForeignKey(
         ProductVariant, related_name="+", on_delete=models.CASCADE)
     size = models.ForeignKey(Size, related_name="+", on_delete=models.PROTECT)
@@ -105,16 +96,24 @@ class SKU(Base):
         return self.varinat.product.product_name
 
 
+class SkuImage(Base):
+    sku = models.ForeignKey(Sku , related_name="+", on_delete=models.CASCADE)
+    image_path = models.ImageField(upload_to='uploads/sku/')
+    image_name = models.CharField(max_length=45)
+
+    def __str__(self):
+        return self.image_name
+
 class Tags(Base):
     title = models.CharField(max_length=45)
     slug = models.SlugField()
-    product = models.ManyToManyField(Product, related_name="+" , blank=True, on_delete=models.PROTECT)
+    product = models.ManyToManyField(Product, related_name="+" , blank=True)
 
     def __str__(self):
         return self.title
 
     class Meta:
         db_table = 'tags'
-        ordering = ('ordering')
+        ordering = ['created_at']
 
     
