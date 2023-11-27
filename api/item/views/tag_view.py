@@ -8,5 +8,14 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 
-class TagApiView:
-    pass
+class TagApiView(APIView):
+    permission_classes = []
+    authentication_classes = []
+
+    def get(self, request, format=None):
+        pass
+
+
+    def post(self, request, format=None):
+        pass
+    

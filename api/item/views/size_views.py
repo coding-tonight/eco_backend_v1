@@ -68,4 +68,8 @@ class SizeAPIView(APIView):
 
 
 class SizeDetailApiView(APIView):
-    pass
+    try:
+        size = Size.objects.filter(is_delete=False)
+    
+    except Size.DoesNotExist as exe:
+        pass

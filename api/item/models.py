@@ -86,14 +86,21 @@ class ProductVariant(Base):
 
 
 class Sku(Base):
-    varinat = models.ForeignKey(
+    variant = models.ForeignKey(
         ProductVariant, related_name="+", on_delete=models.CASCADE)
     size = models.ForeignKey(Size, related_name="+", on_delete=models.PROTECT)
     sku_code = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return self.varinat.product.product_name
+        return self.variant.product.product_name
+    
+    def get_discount_price(self):
+        # get disconted price or return normal price
+        if self.variant.product.discount:
+            return self.variant.product.discount * self.price
+        
+        return self.price
 
 
 class SkuImage(Base):
