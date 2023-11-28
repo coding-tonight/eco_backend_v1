@@ -80,6 +80,11 @@ class ProductVariant(Base):
         Color, related_name="+")
     qty = models.IntegerField()
 
+
+    @staticmethod
+    def get_total_qty(self):
+        pass
+
     class Meta:
         db_table = 'product_variant'
         ordering = ['created_at']
