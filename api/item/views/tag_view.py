@@ -8,11 +8,12 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from item.models import Tags
-# from item.serializer import 
+from item.serializer import TagsSerilaizer
 from app import globalParameters
 
 
 logger = logging.getLogger('django')
+
 
 class TagApiView(APIView):
     permission_classes = []
@@ -23,16 +24,24 @@ class TagApiView(APIView):
             try:
                 tags = Tags.objects.filter(is_delete=False)
 
-            except Tags.DoesNotExist as exe: 
+            except Tags.DoesNotExist as exe:
                 raise Exception(exe)
-            
 
-        
+            seriailier = TagsSerilaizer(tags, many=True)
+
+            MSG = {
+                globalParameters.MESSAGE: globalParameters.SUCCESS_MSG,
+                'status': globalParameters.SUCCESS_CODE,
+                'data': seriailier.data,
+                'recevied_at': datetime.now()
+            }
+            return Response(MSG, status=status.HTTP_200_OK)
+
         except Exception as exe:
             logger.error(str(exe), exc_info=True)
-            return Response()
-
+            return Response({globalParameters.MESSAGE: globalParameters.SUCCESS_MSG,
+                             'status': globalParameters.ERROR_CODE_SERVER_SITE
+                             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request, format=None):
         pass
-    

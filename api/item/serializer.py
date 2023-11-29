@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from item.models import Color ,Size, Product
+from item.models import Color ,Size, Product , Tags
 
 
 class ColorSerilaizer(serializers.Serializer):
@@ -55,8 +55,10 @@ class SizeSerializer(serializers.Serializer):
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     reference_id = serializers.CharField(read_only=True)
+    product_name = serializers.CharField()
+    slug = serializers.SlugField()
     category = serializers.StringRelatedField(many=True)
-    discount = serializers.StringRelatedField(many=True)
+    discount = serializers.StringRelatedField(many=True)   
 
     class Meta:
         model =  Product
@@ -65,7 +67,18 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         
 
 
-class ProductVariant(serializers.HyperlinkedRelatedField):
+class ProductVariant(serializers.Serializer):
+    reference_id = serializers.CharField(read_only=True)
+    product = ProductSerializer(many=True)
+    # price = serializers.DecimalField()
+
+    def create(self, **validated_data):
+        pass
+
+
+
+
+class UrlGenerator(serializers.HyperlinkedRelatedField):
     # defining  these as class attributes , so we don't need  to pass them as arguments
     view_name = 'product-detail'
     queryset = Product.objects.filter(is_delete=False)
@@ -88,11 +101,17 @@ class ProductVariant(serializers.HyperlinkedRelatedField):
     
 
 
-class Tags(serializers.Serializer):
+class TagsSerilaizer(serializers.Serializer):
     reference_id = serializers.CharField(read_only=True)
     title = serializers.CharField()
     # slug = serializers.SlugField()
     product = ProductSerializer(many=True)
+
+    def validate_title(self, value):
+        if not value:
+            raise serializers.ValidationError('Tile is required.')
+        
+        return value
 
     def create(self, **validated_data):
         return Tags.create(**validated_data)
