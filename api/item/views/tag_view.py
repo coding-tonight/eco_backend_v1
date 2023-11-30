@@ -44,4 +44,28 @@ class TagApiView(APIView):
                              }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request, format=None):
-        pass
+        try:
+            data = request.data
+            user = request.user
+
+            serializer = TagsSerilaizer(data=data)            
+            
+            if serializer.is_valid():
+                serializer.save(created_at=datetime.now(),
+                                created_by=user)
+                
+                MSG = {
+                    globalParameters.MESSAGE: globalParameters.SUCCESS_MSG,
+                    'status': globalParameters.SUCCESS_CODE,
+                }
+                return Response(MSG, status=status.HTTP_200_OK)
+            
+            return Response({ globalParameters.MESSAGE: globalParameters.ERROR_MSG
+                             ,'status': globalParameters.ERROR_CODE_CLIENT_SITE},
+                             status=status.HTTP_401_UNAUTHORIZED)
+        
+        except Exception as exe:
+            logger.error(str(exe), exc_info=True)
+            return Response({ globalParameters.MESSAGE: globalParameters.ERROR_MSG
+                             ,'status': globalParameters.ERROR_CODE_SERVER_SITE},
+                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)

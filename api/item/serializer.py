@@ -1,3 +1,5 @@
+from django.db import transaction
+
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
@@ -59,6 +61,10 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     slug = serializers.SlugField()
     category = serializers.StringRelatedField(many=True)
     discount = serializers.StringRelatedField(many=True)   
+    thumbnail  = serializers.ImageField()
+
+    def create(self, validated_data):
+        pass
 
     class Meta:
         model =  Product
@@ -67,12 +73,16 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         
 
 
-class ProductVariant(serializers.Serializer):
+class ProductVariantSerializer(serializers.Serializer):
     reference_id = serializers.CharField(read_only=True)
     product = ProductSerializer(many=True)
     # price = serializers.DecimalField()
 
-    def create(self, **validated_data):
+    def create(self, validated_data):
+        pass
+
+
+    def update(self, instance, validated_data):
         pass
 
 
@@ -118,6 +128,7 @@ class TagsSerilaizer(serializers.Serializer):
     
     def update(self, instance, **validated_data):
         instance.title = validated_data.get('title')
+        instance.product = validated_data.get('product')
         instance.save()
 
         return instance
