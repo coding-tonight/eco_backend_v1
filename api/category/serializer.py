@@ -7,6 +7,7 @@ class CategorySerializer(serializers.Serializer):
     reference_id = serializers.CharField(read_only=True)
     category_name = serializers.CharField()
     icon_url = serializers.ImageField(required=False)
+    # slug = Category.get_absolute_url()
 
     # def validate_category_name(self, data):
     #     return 

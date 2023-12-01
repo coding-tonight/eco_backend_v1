@@ -18,3 +18,6 @@ class Category(Base):
     
     def __str__(self):
         return self.category_name
+    
+    def get_absolute_url(self):
+        return self.category_name

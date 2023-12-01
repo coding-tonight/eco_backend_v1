@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'category.apps.CategoryConfig',
     'docs.apps.DocsConfig',
     'metadata.apps.MetadataConfig',
-    'item.apps.ItemConfig'
 ]
 
 CORS_ALLOWED_ORIGINS = [
