@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models.query import QuerySet
 from django.utils.text import slugify
 
 from app.models import Base
@@ -32,14 +31,23 @@ class Color(Base):
         db_table = 'colors'
 
 
+class Discount(Base):
+    title = models.CharField(max_length=45)
+    percent = models.DecimalField(max_digits=5, null=True)
+
+    class Meta:
+        db_table = 'discount'
+
+
 """ product models section.
 """
+
 
 class ProductQuerySet(models.QuerySet):
 
     def get_deleted_product(self):
         return self.filter(is_delete=True)
-    
+
     def get_all_product(self):   # excludes the deleted items
         return self.filter(is_delete=False)
 
@@ -47,15 +55,15 @@ class ProductQuerySet(models.QuerySet):
 class ProductManager(models.Manager):
     """ product manager 
     """
+
     def get_queryset(self):
         return ProductQuerySet(self.model, using=self._db)
-    
+
     def get_all_product(self):
         return ProductQuerySet.get_all_product()
-    
-    def delete_product(self):
+
+    def get_deleted_product(self):
         return ProductQuerySet.get_deleted_product()
-    
 
 
 class Product(Base):
@@ -68,8 +76,10 @@ class Product(Base):
     is_recommeded = models.BooleanField(default=False)
     thumbnail = models.ImageField(
         upload_to='uploads/product/thumbnail/', blank=True, null=True)
+    discount = models.ForeignKey(
+        Discount, related_name="+", on_delete=models.PROTECT)
+    rating = models.IntegerField(null=True)
     slug = models.SlugField(unique=True)
-
 
     objects = models.Manager()
     product_objects = ProductManager()
@@ -88,7 +98,7 @@ class Product(Base):
 class ProductVariant(Base):
     product = models.ForeignKey(
         Product, related_name="+", on_delete=models.CASCADE)
-    price = models.DecimalField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     color = models.ManyToManyField(
         Color, related_name="+", on_delete=models.PROTECT)
     size = models.ManyToManyField(
@@ -105,10 +115,18 @@ class ProductImage(Base):
         ProductVariant, related_name="+", on_delete=models.CASCADE)
     image = models.ImageField(upload_to='uploads/product/image', null=True)
 
-
     def __str__(self):
         return f"{self.variant.product.product_name}-{self.reference_id}"
 
-    class Meta: 
+    class Meta:
         db_table = 'product_image'
 
+
+class Tags(Base):
+    tag_name = models.CharField(max_length=45)
+    product = models.ManyToManyField(
+        Product, related_name="+", on_delete=models.PROTECT)
+
+    class Meta:
+        db_table = 'tags'
+        ordering = ['created_at']
