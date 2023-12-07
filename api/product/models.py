@@ -9,7 +9,7 @@ from category.models import Category
 
 class Size(Base):
     size_code = models.CharField(max_length=10)  # xl | xxl | sm  example
-    size = models.CharField()  # small , extra large , double xl
+    size = models.CharField(max_length=10)  # small , extra large , double xl
 
     def __str__(self):
         return self.size_code
@@ -33,7 +33,7 @@ class Color(Base):
 
 class Discount(Base):
     title = models.CharField(max_length=45)
-    percent = models.DecimalField(max_digits=5, null=True)
+    percent = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
     class Meta:
         db_table = 'discount'
@@ -56,7 +56,7 @@ class ProductManager(models.Manager):
     """ product manager 
     """
 
-    def get_queryset(self):
+    def get_queryset(self): 
         return ProductQuerySet(self.model, using=self._db)
 
     def get_all_product(self):
@@ -100,9 +100,9 @@ class ProductVariant(Base):
         Product, related_name="+", on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     color = models.ManyToManyField(
-        Color, related_name="+", on_delete=models.PROTECT)
+        Color, related_name="+")
     size = models.ManyToManyField(
-        Size, related_name="+", on_delete=models.PROTECT)
+        Size, related_name="+")
     stock = models.IntegerField(null=True, blank=True)
 
     class Meta:
@@ -125,7 +125,7 @@ class ProductImage(Base):
 class Tags(Base):
     tag_name = models.CharField(max_length=45)
     product = models.ManyToManyField(
-        Product, related_name="+", on_delete=models.PROTECT)
+        Product, related_name="+")
 
     class Meta:
         db_table = 'tags'
