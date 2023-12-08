@@ -5,7 +5,7 @@ from product.models import Size, Color, Discount, Product, ProductVariant
 
 from category.serializer import CategorySerializer
 from category.models import Category
-from product.models import ProductImage, Product, ProductVariant
+from product.models import ProductImage, Product, ProductVariant, Tags
 
 
 class SizeSerializer(serializers.Serializer):
@@ -150,24 +150,65 @@ class ProductSeriailzier(serializers.Serializer):
                 raise exe
 
     def update(self, instance, validated_data):
-        instance.product_name = validated_data.get('product_name')
-        instance.product_code = validated_data.get('product_code')
-        instance.description = validated_data.get('description')
-        instance.is_featured = validated_data.get('is_featured')
-        instance.is_recommend = validated_data.get('is_recommend')
-        instance.thumbnail = validated_data.get('thumbnail')
-        instance.rating = validated_data.get('rating')
-        instance.slug = validated_data.get('slug')
+        with transaction.atomic():
+            sid = transaction.savepoint()
+            try:
+                instance.product_name = validated_data.get('product_name')
+                instance.product_code = validated_data.get('product_code')
+                instance.description = validated_data.get('description')
+                instance.is_featured = validated_data.get('is_featured')
+                instance.is_recommend = validated_data.get('is_recommend')
+                instance.thumbnail = validated_data.get('thumbnail')
+                instance.rating = validated_data.get('rating')
+                instance.slug = validated_data.get('slug')
 
-        instance.discount = Discount.objects.get(
-            reference_id=validated_data.get('discount'))
-        instance.category = Category.objects.get(
-            reference_id=validated_data.get('category'))
+                instance.discount = Discount.objects.get(
+                    reference_id=validated_data.get('discount'))
+                instance.category = Category.objects.get(
+                    reference_id=validated_data.get('category'))
 
-        variants = validated_data.pop('variants')
-        images = validated_data.pop('images')
+                variants = validated_data.pop('variants')
+                images = validated_data.pop('images')
 
-        pass
+                for variant in variants:
+                    variant_instance = ProductVariant.objects.get(
+                        reference_id=variant.reference_id)
 
-     
-                
+                    if variant_instance:
+                        variant_instance.product = instance
+                        variant_instance.price = variant.get('price')
+                        variant_instance.size = variant.get('size')
+                        variant_instance.stock = variant.get('stock')
+                        variant_instance.save()
+
+                    for image in images:
+                        image_instance = ProductImage.objects.get(
+                            reference_id=image.reference_id)
+
+                        if image_instance:
+                            image_instance.variant = variant
+                            image_instance.image = image
+                            image_instance.save()
+                transaction.savepoint_commit(sid)
+                return instance
+
+            except Exception as exe:
+                transaction.savepoint_rollback(sid)
+                raise exe
+
+
+class TagsSerializer(serializers.Serializer):
+    reference_id = serializers.CharField(read_only=True)
+    tag_name = serializers.CharField()
+    # product = ProductSeriailzier(many=True)
+
+
+    def create(self, validated_data):
+        return Tags.objects.create(**validated_data)
+
+
+    def update(self, instance, validated_data):
+        instance.tag_name = validated_data.get('tag_name')
+        instance.save()
+
+        return instance
