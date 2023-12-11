@@ -12,3 +12,7 @@ MESSAGE = 'MSG'
 LOGIN_MSG = 'You are successfully login.'
 INVALID_MSG = 'Credentials invalid.'
 LOGOUT_MSG = 'Sucessfully logout.'
+
+
+# errors messages
+NULL_VALUE = 'This field is Required'
