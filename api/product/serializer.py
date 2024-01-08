@@ -103,8 +103,9 @@ class ProductImageSerializer(serializers.Serializer):
     image = serializers.ImageField()
 
     def create(self, validated_data):
-        # validated_data.pop('variant')
-        return ProductImage(**validated_data)
+        # # validated_data.pop('variant')
+        # return ProductImage(**validated_data)
+        pass
 
     def update(self, instance, validated_data):
         pass
@@ -148,7 +149,7 @@ class ProductSeriailzier(serializers.Serializer):
             except Exception as exe:
                 transaction.savepoint_rollback(sid)
                 raise exe
-
+ 
     def update(self, instance, validated_data):
         with transaction.atomic():
             sid = transaction.savepoint()

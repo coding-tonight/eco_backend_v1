@@ -34,6 +34,8 @@ def product_validation(request):
     if category_ref_id is None or not Category.objects.get(reference_id=category_ref_id):
         error_list.append(f"Category: {globalParameters.NULL_VALUE}")
     
+    
+    
 
     return error_list, product_name, product_code, description , is_featured
 

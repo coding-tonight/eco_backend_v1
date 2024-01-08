@@ -195,7 +195,9 @@ class VerifyOTP(APIView):
 
         except Exception as exe:
             logger.error(str(exe), exc_info=True)
-            return Response({globalParameters.MESSAGE: globalParameters.ERROR_MSG, 'status': globalParameters.ERROR_CODE_SERVER_SITE}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({globalParameters.MESSAGE: globalParameters.ERROR_MSG, 
+                             'status': globalParameters.ERROR_CODE_SERVER_SITE},
+                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ChangePassword(APIView):
@@ -249,7 +251,8 @@ class ChangePassword(APIView):
 
         except Exception as exe:
             logger.error(str(exe), exc_info=True)
-            return Response({globalParameters.MESSAGE: globalParameters.ERROR_CODE_SERVER_SITE}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({globalParameters.MESSAGE: globalParameters.ERROR_CODE_SERVER_SITE}, 
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class LoginOut(APIView):

@@ -45,6 +45,7 @@ class ProductAdminApiView(ProductApiView):
     authentication_classes = [IsAdminUser, IsAuthenticated]
     """ reterive , update and add view for for amdin users
     """
+
     def post(self, request, format=None):
         try:
             data = request.data
@@ -73,3 +74,37 @@ class ProductAdminApiView(ProductApiView):
             return Response({globalParameters.MESSAGE: globalParameters.ERROR_MSG,
                              'status': globalParameters.ERROR_CODE_SERVER_SITE},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def put(self, request, ref_id, format=None):
+        try:
+            try:
+                product = Product.objects.get(reference_id=ref_id)
+
+            except Product.DoesNotExist as exe:
+                raise Exception(exe)
+
+            data = request.data
+            user = request.user
+
+            serializer = ProductSeriailzier(product, data=data)
+            if serializer.is_valid():
+                serializer.save(updated_at=datetime.now(),
+                                updated_by=user)
+
+                MSG = {
+                    globalParameters.MESSAGE: globalParameters.SUCCESS_MSG,
+                    'status': globalParameters.SUCCESS_CODE,
+                }
+                return Response(MSG, status=status.HTTP_200_OK)
+
+            return Response({globalParameters.MESSAGE: globalParameters.SUCCESS_MSG,
+                            'status': globalParameters.SUCCESS_CODE,
+                            'errors': serializer.errors},
+                            status=status.HTTP_401_UNAUTHORIZED)
+        
+        except Exception as exe:
+            logger.error(str(exe), exc_info=True)
+            # return Response()
+            pass
+            
+
